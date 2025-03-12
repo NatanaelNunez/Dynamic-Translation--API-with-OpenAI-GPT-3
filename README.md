@@ -36,6 +36,9 @@ API designed to provide dynamic and incremental translations using OpenAI GPT-3 
 
 ## 🚀 Instalación | Installation
 
+([Ver instalación](https://youtu.be/WXn1TR3B1e8))
+([Watch install](https://youtu.be/WXn1TR3B1e8))
+
 1. **Clona este repositorio | Clone this repository:**
    ```bash
    git clone https://github.com/NatanaelNunez/Dynamic-Translation--API-with-OpenAI-GPT-3
