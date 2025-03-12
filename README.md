@@ -53,7 +53,7 @@ API designed to provide dynamic and incremental translations using OpenAI GPT-3 
    - **EN:** Make sure you have an OpenAI account and get your API key. Then, replace the key in the `app.py` script.
 
 4. **Start API**
-   python app.py
+python app.py
 
 
 ## 📝 Uso | Usage
