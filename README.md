@@ -128,28 +128,27 @@ print(result)
 
 ## 🎥 Demo | Demo
 
+
+## 💻 Ejemplos | Examples and Configuration
+
+**MORT:**
+
+**Documentación oficial | Official documentation:** [https://github.com/killkimno/MORT/blob/main/README.md](https://github.com/killkimno/MORT/blob/main/README.md)
+
 **ES:** He creado un video demostrativo que muestra cómo funciona la API en proyectos como Mort. [Ver demostración](https://tu-link-de-demo.com)
 
 **EN:** I've created a demo video showing how the API works in projects like Mort. [Watch demo](https://your-demo-link.com)
 
-## 💻 Ejemplos y Configuración Adicionales | Additional Examples and Configuration
+**ES:** proyecto MORT, puedes consultar:
+**EN:** MORT project , you can consult:
 
-**ES:** Para ejemplos más detallados de configuración y uso del proyecto MORT, puedes consultar:
-**EN:** For more detailed examples of MORT project configuration and usage, you can consult:
+- **Blog de ejemplos | Examples blog:** [https://blog.naver.com/killkimno/221760617100](https://blog.naver.com/killkimno/221760617100) 
 
-- **Blog de ejemplos | Examples blog:** [https://blog.naver.com/killkimno/221760617100](https://blog.naver.com/killkimno/221760617100)
-- **Documentación oficial | Official documentation:** [https://github.com/killkimno/MORT/blob/main/README.md](https://github.com/killkimno/MORT/blob/main/README.md)
 
-**ES:** Estos recursos contienen información valiosa sobre:
-**EN:** These resources contain valuable information about:
-- **ES:** Configuración avanzada
-- **EN:** Advanced configuration
-- **ES:** Casos de uso específicos
-- **EN:** Specific use cases
-- **ES:** Tutoriales paso a paso
-- **EN:** Step-by-step tutorials
-- **ES:** Solución de problemas comunes
-- **EN:** Troubleshooting common issues
+
+------------------------------------
+
+
 
 ## 🤝 Contribuciones | Contributions
 
