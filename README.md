@@ -47,6 +47,8 @@ API designed to provide dynamic and incremental translations using OpenAI GPT-3 
    ```
 
 3. **Configura la clave API de OpenAI | Configure your OpenAI API key:**
+   ![image](https://github.com/user-attachments/assets/f9287b38-db09-40ea-aeb6-3e438f20eac1)
+
    - **ES:** Asegúrate de tener una cuenta en OpenAI y obtener tu clave API. Luego, reemplaza la clave en el script `app.py`.
    - **EN:** Make sure you have an OpenAI account and get your API key. Then, replace the key in the `app.py` script.
 
