@@ -3,154 +3,151 @@ import openai
 import logging
 import re
 
-# V 1.0.0
-# https://github.com/NatanaelNunez/Dynamic-Translation--API-with-OpenAI-GPT-3
-
-# Initialize Flask app / Inicializa la aplicación Flask
+# Initialize the Flask application
 app = Flask(__name__)
+# Configure logging for debugging
 logging.basicConfig(level=logging.DEBUG)
 
-# Set OpenAI API key / Establece la clave API de OpenAI
-openai.api_key = "your OpenAI API key"
+# OpenAI API key (replace with your own key)
+openai.api_key = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
 
-# Original texts history per session / Historial de textos originales por sesión
-original_texts = {}
-# Full translations per session / Traducciones completas por sesión
-complete_translations = {}
-# Dialogue completion status per session / Indicador de diálogo completo por sesión
-dialogue_complete = {}
+# Dictionaries to store original texts and translations by session
+original_texts = {}  # Historial de texto original por sesión
+complete_translations = {}  # Traducciones completas por sesión
+dialogue_complete = {}  # Indicador de finalización de diálogo por sesión
 
 @app.route('/api/translator', methods=['POST'])
 def translate_api():
-      """
-    This function handles incoming requests to translate text and store session information. / 
-    Esta función maneja las solicitudes entrantes para traducir texto y almacenar la información de la sesión.
-
-    Parameters: 
-    -----------
-    None
-
-    Returns:
-    --------
-    dict:
-        JSON containing translated text or an error message. /
-        JSON que contiene el texto traducido o un mensaje de error.
-    """
     global original_texts, complete_translations, dialogue_complete
-    app.logger.debug("Solicitud recibida en /api/translator")  # Request received at /api/translator / Solicitud recibida en /api/translator
-    
-   if request.is_json:  # Check if the request is JSON / Verifica si la solicitud es JSON
-        data = request.get_json()  # Get the JSON data from the request / Obtiene los datos JSON de la solicitud
-        text_to_translate = data.get('text', '')  # Get the text to translate / Obtiene el texto a traducir
-        target_language = data.get('target_lang', 'Spanish')  # Get the target language / Obtiene el idioma objetivo
-        session_id = data.get('session_id', 'default')  # Get the session ID / Obtiene el ID de la sesión
-        is_complete = data.get('is_complete', False)  # Check if it's a complete dialogue / Verifica si es un diálogo completo
-        force_complete = data.get('force_complete', False)  # Force completion of the translation / Forzar la finalización de la traducción
-        reset = data.get('reset', False)  # Check if reset is requested / Verifica si se solicita reiniciar
+    # Log request received
+    app.logger.debug("Solicitud recibida en /api/translator")  # Log the request
+
+    # Check if the request is in JSON format
+    if request.is_json:
+        data = request.get_json()  # Get the JSON data from the request
+        text_to_translate = data.get('text', '')  # Texto a traducir
+        target_language = data.get('target_lang', 'Spanish')  # Target language (default is "Spanish")
+        session_id = data.get('session_id', 'default')  # Session ID
+        is_complete = data.get('is_complete', False)  # Flag to mark if the dialogue is complete
+        force_complete = data.get('force_complete', False)  # Flag to force full translation
+        reset = data.get('reset', False)  # Flag to reset history
         
-        
-        app.logger.debug(f"Text to translate: '{text_to_translate}'")  # Log the text to translate / Registrar el texto a traducir
-        app.logger.debug(f"Is the dialogue complete?: {is_complete}")  # Log if the dialogue is complete / Registrar si el diálogo está completo
+        # Log the values obtained from the request
+        app.logger.debug(f"Texto a traducir: '{text_to_translate}'")  # Log text to translate
+        app.logger.debug(f"¿Diálogo completo?: {is_complete}")  # Log if dialogue is complete
     else:
-        return jsonify({"error": "Expected JSON format"}), 400  # Return an error if not JSON / Devuelve un error si no es JSON
+        return jsonify({"error": "Se esperaba formato JSON"}), 400  # Return error if not in JSON format
     
-     # Initialize session data if it doesn't exist / Inicializa los datos de la sesión si no existen
+    # Initialize history if it doesn't exist
     if session_id not in original_texts:
-        original_texts[session_id] = ""  # Initialize original texts for the session / Inicializa los textos originales para la sesión
-        complete_translations[session_id] = ""  # Initialize complete translations for the session / Inicializa las traducciones completas para la sesión
-        dialogue_complete[session_id] = False  # Initialize dialogue completion status / Inicializa el estado de completitud del diálogo
+        original_texts[session_id] = ""
+        complete_translations[session_id] = ""
+        dialogue_complete[session_id] = False
     
-     # Handle reset request / Maneja la solicitud de reinicio
+    # If reset is requested, clear the history
     if reset:
-        original_texts[session_id] = ""  # Clear original text / Borra el texto original
-        complete_translations[session_id] = ""  # Clear complete translation / Borra la traducción completa
-        dialogue_complete[session_id] = False  # Reset dialogue completion status / Reinicia el estado de completitud del diálogo
-        return jsonify({"result": ""})  # Return an empty result / Devuelve un resultado vacío
+        original_texts[session_id] = ""
+        complete_translations[session_id] = ""
+        dialogue_complete[session_id] = False
+        return jsonify({"result": ""})  # Return an empty result
     
-     # Handle full translation request / Maneja la solicitud de traducción completa
+    # If the dialogue is marked as complete
     if is_complete:
-        dialogue_complete[session_id] = True  # Mark the dialogue as complete / Marca el diálogo como completo
+        dialogue_complete[session_id] = True  # Mark as complete
         
+        # If we already have a complete translation, return it
         if complete_translations[session_id]:
-            return jsonify({"result": complete_translations[session_id]})  # Return the complete translation / Devuelve la traducción completa
+            return jsonify({"result": complete_translations[session_id]})
             
+        # If we don't have a complete translation but we have the original text, proceed to translate everything
         if original_texts[session_id]:
             try:
-                complete_translation = translate_text_gpt(original_texts[session_id], target_language)  # Get complete translation from GPT / Obtiene la traducción completa desde GPT
+                complete_translation = translate_text_gpt(original_texts[session_id], target_language)
                 if complete_translation:
-                    complete_translations[session_id] = complete_translation  # Store the complete translation / Almacena la traducción completa
-                    return jsonify({"result": complete_translation})  # Return the complete translation / Devuelve la traducción completa
+                    complete_translations[session_id] = complete_translation
+                    return jsonify({"result": complete_translation})  # Return the full translation
             except Exception as e:
-                app.logger.error(f"Error translating complete text: {str(e)}")  # Log error if translation fails / Registra el error si la traducción falla
-                return jsonify({"result": complete_translations[session_id] or "Error in translation"}), 500  # Return error or previous translation / Devuelve el error o la traducción previa
+                app.logger.error(f"Error traduciendo texto completo: {str(e)}")  # Log error in translation
+                return jsonify({"result": complete_translations[session_id] or "Error en la traducción"}), 500
     
-    # Handle case where no text to translate / Maneja el caso sin texto para traducir
+    # If no text to translate
     if not text_to_translate:
+        # If the dialogue is complete, return the full translation
         if dialogue_complete[session_id] and complete_translations[session_id]:
-            return jsonify({"result": complete_translations[session_id]})  # Return the full translation if available / Devuelve la traducción completa si está disponible
-        return jsonify({"error": "No text to translate"}), 400  # Return an error if no text is provided / Devuelve un error si no se proporciona texto
+            return jsonify({"result": complete_translations[session_id]})
+        return jsonify({"error": "No hay texto para traducir"}), 400  # Error if no text to translate
     
-     try:
-        is_new_fragment = not text_to_translate.strip() in original_texts[session_id]  # Check if this is a new fragment / Verifica si este es un nuevo fragmento
-        
-        if is_new_fragment:
-            if original_texts[session_id] and text_to_translate.startswith(original_texts[session_id]):
-                additional_text = text_to_translate[len(original_texts[session_id]):]  # Get additional text to append / Obtiene el texto adicional para agregar
-                original_texts[session_id] += additional_text  # Append additional text / Agrega el texto adicional
-            else:
-                original_texts[session_id] = text_to_translate  # Set the original text for the session / Establece el texto original para la sesión
-        
-        if force_complete or dialogue_complete[session_id]:
-            complete_translation = translate_text_gpt(original_texts[session_id], target_language)  # Get complete translation if requested / Obtiene la traducción completa si se solicita
-            if complete_translation:
-                complete_translations[session_id] = complete_translation  # Store the complete translation / Almacena la traducción completa
-                return jsonify({"result": complete_translation})  # Return the complete translation / Devuelve la traducción completa
-        
-        translated_text = translate_text_gpt(text_to_translate, target_language)  # Get translation for the current fragment / Obtiene la traducción para el fragmento actual
-        if not translated_text:
-            app.logger.warning("Translation failed or is empty.")  # Log warning if translation fails / Registra una advertencia si la traducción falla
-            if complete_translations[session_id]:
-                return jsonify({"result": complete_translations[session_id]})  # Return complete translation if available / Devuelve la traducción completa si está disponible
-            return jsonify({"error": "Error in translation"}), 500  # Return an error if no translation / Devuelve un error si no hay traducción
-        
-        if len(translated_text) > len(complete_translations[session_id]):
-            complete_translations[session_id] = translated_text  # Store the updated translation / Almacena la traducción actualizada
-        
-        return jsonify({"result": translated_text})  # Return the translated text / Devuelve el texto traducido
-    except Exception as e:
-        app.logger.error(f"Error during translation process: {str(e)}")  # Log any error during the translation process / Registra cualquier error durante el proceso de traducción
-        if complete_translations[session_id]:
-            return jsonify({"result": complete_translations[session_id]})  # Return the complete translation if available / Devuelve la traducción completa si está disponible
-        return jsonify({"error": f"Error in translation: {str(e)}"}), 500  # Return error if translation fails / Devuelve un error si la traducción falla
-
-def translate_text_gpt(text, target_language):
-    """
-    Function to translate text using GPT from OpenAI. / 
-    Función para traducir texto utilizando GPT de OpenAI.
-
-    Parameters:
-    -----------
-    text : str / texto : str
-        The text to be translated. / El texto que se va a traducir.
-    
-    target_language : str / idioma_objetivo : str
-        The target language for the translation. / El idioma objetivo de la traducción.
-
-    Returns:
-    --------
-    str: / str:
-        The translated text. / El texto traducido.
-    """
     try:
-        response = openai.Completion.create(
-            engine="text-davinci-003",  # Set the GPT engine / Establece el motor GPT
-            prompt=f"Translate the following text to {target_language}: {text}",  # Translation prompt / Indicación para la traducción
-            max_tokens=1024,  # Max tokens for the response / Máximo de tokens para la respuesta
-            n=1,  # Number of responses to generate / Número de respuestas a generar
-            stop=None,  # Stop sequence for completion / Secuencia de parada para la completación
-            temperature=0.7  # Temperature setting for creativity / Configuración de temperatura para creatividad
-        )
-        translated_text = response.choices[0].text.strip()  # Get the translated text from response / Obtiene el texto traducido de la respuesta
-        return translated_text  # Return the translated text / Devuelve el texto traducido
+        # Check if the text is a new fragment or a repeat
+        is_new_fragment = not text_to_translate.strip() in original_texts[session_id]
+        
+        # Only accumulate the text if it's a new fragment
+        if is_new_fragment:
+            # Process the text to avoid partial duplications
+            if original_texts[session_id] and text_to_translate.startswith(original_texts[session_id]):
+                # If the new text starts where the previous one ended, add only the new part
+                additional_text = text_to_translate[len(original_texts[session_id]):]
+                original_texts[session_id] += additional_text
+            else:
+                # If no match, add the entire text
+                original_texts[session_id] = text_to_translate
+        
+        # If requested to force a full translation or the dialogue is marked as complete
+        if force_complete or dialogue_complete[session_id]:
+            complete_translation = translate_text_gpt(original_texts[session_id], target_language)
+            if complete_translation:
+                complete_translations[session_id] = complete_translation
+                return jsonify({"result": complete_translation})
+        
+        # For incremental translation
+        translated_text = translate_text_gpt(text_to_translate, target_language)
+        if not translated_text:
+            app.logger.warning("La traducción ha fallado o está vacía.")  # Log warning if translation failed
+            # If we have a full translation, use it as a fallback
+            if complete_translations[session_id]:
+                return jsonify({"result": complete_translations[session_id]})
+            return jsonify({"error": "Error en la traducción"}), 500
+        
+        # Update the complete translation if the new translation is longer
+        if len(translated_text) > len(complete_translations[session_id]):
+            complete_translations[session_id] = translated_text
+        
+        # Return the translated text
+        return jsonify({"result": translated_text})
     except Exception as e:
-        raise Exception(f"Error during translation API call: {str(e)}")  # Log and raise error if API call fails / Registra y lanza error si la llamada a la API falla
+        app.logger.error(f"Error en el proceso de traducción: {str(e)}")  # Log error in translation process
+        # If we have a complete translation, use it as a fallback
+        if complete_translations[session_id]:
+            return jsonify({"result": complete_translations[session_id]})
+        return jsonify({"error": f"Error en la traducción: {str(e)}"}), 500  # Return error if translation failed
+
+# Function to translate text using OpenAI GPT
+def translate_text_gpt(text, target_language):
+    try:
+        # Using the old syntax of the OpenAI API
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",  # Model used for translation
+            messages=[ 
+                {"role": "system", "content": "Eres un asistente útil."},  # System message to set context
+                {"role": "user", "content": f"Traduce el siguiente texto a {target_language} y pon todo en femenino: {text.strip()}"}  # User message to translate
+            ],
+            temperature=0.5,  # Adjust the temperature for randomness
+        )
+        
+        # Accessing the translation from the response
+        translated_text = response['choices'][0]['message']['content'].strip()
+        
+        # Log the complete response for inspection
+        app.logger.debug(f"Respuesta de OpenAI: {translated_text}")
+        
+        # Check if the response is empty
+        if not translated_text:
+            app.logger.warning("La respuesta de GPT está vacía.")  # Log if the response is empty
+        return translated_text
+    except Exception as e:
+        app.logger.error(f"Error durante la traducción: {e}")  # Log error during translation
+        return None
+
+# Run the Flask application
+if __name__ == '__main__':
+    app.run(debug=True, host='0.0.0.0', port=8080)  # Run the app
