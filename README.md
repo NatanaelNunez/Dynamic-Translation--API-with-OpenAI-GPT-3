@@ -52,6 +52,10 @@ API designed to provide dynamic and incremental translations using OpenAI GPT-3 
    - **ES:** Asegúrate de tener una cuenta en OpenAI y obtener tu clave API. Luego, reemplaza la clave en el script `app.py`.
    - **EN:** Make sure you have an OpenAI account and get your API key. Then, replace the key in the `app.py` script.
 
+4. **Start API**
+   python app.py
+
+
 ## 📝 Uso | Usage
 
 ### Endpoint: `/api/translator`
