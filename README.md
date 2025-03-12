@@ -128,7 +128,6 @@ print(result)
    - **ES:** Puedes elegir el idioma y el género de la traducción según las necesidades de tu proyecto.
    - **EN:** You can choose the language and gender of the translation according to your project's needs.
 
-## 🎥 Demo | Demo
 
 
 ## 💻 Ejemplos | Examples and Configuration
