@@ -1,10 +1,6 @@
 # API de Traducción Dinámica con OpenAI GPT-3
 # Dynamic Translation API with OpenAI GPT-3
 
-<p align="center">
-  <img src="/api/placeholder/400/200" alt="Mort Logo" />
-</p>
-
 > Traducción dinámica e incremental para contenido en tiempo real  
 > Dynamic and incremental translation for real-time content
 
