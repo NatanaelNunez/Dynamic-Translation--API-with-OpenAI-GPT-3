@@ -7,10 +7,10 @@
 ## 🌍 Descripción | Description
 
 **Español:**  
-Mort es una API diseñada para ofrecer traducciones dinámicas e incrementales utilizando la inteligencia artificial de OpenAI GPT-3. Permite traducir texto de manera continua por sesión, y también ofrece la opción de traducir textos completos una vez que se marca como finalizado.
+API diseñada para ofrecer traducciones dinámicas e incrementales utilizando la inteligencia artificial de OpenAI GPT-3. Permite traducir texto de manera continua por sesión, y también ofrece la opción de traducir textos completos una vez que se marca como finalizado.
 
 **English:**  
-Mort is an API designed to provide dynamic and incremental translations using OpenAI GPT-3 AI. It allows translating text continuously per session, and also offers the option to translate complete texts once marked as finished.
+API designed to provide dynamic and incremental translations using OpenAI GPT-3 AI. It allows translating text continuously per session, and also offers the option to translate complete texts once marked as finished.
 
 ## ✨ Beneficios | Benefits
 
