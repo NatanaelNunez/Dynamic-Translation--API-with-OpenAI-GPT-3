@@ -138,7 +138,6 @@ print(result)
 
 **MORT:**
 
-**Documentación oficial | Official documentation:** [https://github.com/killkimno/MORT/blob/main/README.md](https://github.com/killkimno/MORT/blob/main/README.md)
 
 **ES:** He creado un video demostrativo que muestra cómo funciona la API en proyectos como Mort. [Ver demostración](https://tu-link-de-demo.com)
 
@@ -147,9 +146,9 @@ print(result)
 **ES:** proyecto MORT, puedes consultar:
 **EN:** MORT project , you can consult:
 
-- **Blog de ejemplos | Examples blog:** [https://blog.naver.com/killkimno/221760617100](https://blog.naver.com/killkimno/221760617100) 
+**Documentación oficial | Official documentation:** [https://github.com/killkimno/MORT/blob/main/README.md](https://github.com/killkimno/MORT/blob/main/README.md)
 
-
+- **Blog ejemplos de otras APIS | Examples blog:** [https://blog.naver.com/killkimno/221760617100](https://blog.naver.com/killkimno/221760617100) 
 
 ------------------------------------
 
